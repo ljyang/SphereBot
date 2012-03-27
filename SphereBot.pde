@@ -46,12 +46,13 @@
 #define YAXIS_ENDSTOP_PIN -1 // <0 0> No Endstop!
 
 #define SERVO_PIN 2
+#define PS_ON 5
 
 /*
  * Other Configuration
  */
 
-#define DEFAULT_PEN_UP_POSITION 50
+#define DEFAULT_PEN_UP_POSITION 0
 #define XAXIS_MIN_STEPCOUNT -467
 #define XAXIS_MAX_STEPCOUNT 467
 #define DEFAULT_ZOOM_FACTOR 1. // With a Zoom-Faktor of .65, I can print gcode for Makerbot Unicorn without changes. 
@@ -93,6 +94,8 @@ const double maxFeedrate = 6000.;
 
 void setup()
 {
+    pinMode(PS_ON, OUTPUT);
+    digitalWrite(PS_ON, LOW);
     Serial.begin(115200);
 
     clear_buffer();
@@ -358,6 +361,14 @@ void process_commands(char command[], int command_length) // deals with standard
       case 18: // Disable Drives
         xAxisStepper.resetStepper();
         rotationStepper.resetStepper();
+        break;
+
+      case 80: // turn on power supply
+        digitalWrite(PS_ON, LOW);
+        break;
+        
+      case 81: // turn off power supply
+        digitalWrite(PS_ON, HIGH);
         break;
 
       case 300: // Servo Position
